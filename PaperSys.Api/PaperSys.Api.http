@@ -1,0 +1,6 @@
+@PaperSys.Api_HostAddress = http://localhost:5239
+
+GET {{PaperSys.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

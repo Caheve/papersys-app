@@ -1,0 +1,279 @@
+/* Gestión de productos - estilos consistentes con Inventory */
+.manage-container {
+  padding: 16px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+  max-width: 1200px;
+  margin: 12px auto;
+}
+
+.manage-grid {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.manage-form {
+  background: #fff;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  height: fit-content;
+}
+
+.manage-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.manage-form h3 {
+  margin-top: 0;
+  color: #50C79F;
+  font-size: 18px;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.form-row label {
+  font-weight: 600;
+  font-size: 13px;
+  color: #333;
+}
+
+.form-row input[type="text"],
+.form-row input[type="number"],
+.search-input,
+.form-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  background: #fff;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+  color: #000;
+}
+
+.form-row input[type="text"]:focus,
+.form-row input[type="number"]:focus,
+.search-input:focus,
+.form-input:focus {
+  outline: none;
+  border-color: #50C79F;
+  box-shadow: 0 0 8px rgba(80, 199, 159, 0.2);
+}
+
+.form-input::placeholder,
+.search-input::placeholder {
+  color: #999;
+}
+
+.search-input {
+  margin-bottom: 12px;
+}
+
+.actions {
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.btn-primary {
+  background-color: #50C79F;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  flex: 1;
+  min-width: 100px;
+}
+
+.btn-primary:hover {
+  background-color: #3aa584;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(80, 199, 159, 0.3);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background: #f4f4f4;
+  border: 1px solid #ddd;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  flex: 1;
+  min-width: 100px;
+}
+
+.btn-secondary:hover {
+  background: #e8e8e8;
+  border-color: #999;
+}
+
+.btn-danger {
+  background: #ff6b6b;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 12px;
+  transition: all 0.2s ease;
+}
+
+.btn-danger:hover {
+  background: #ff5252;
+  transform: translateY(-2px);
+}
+
+.product-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.product-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.product-actions button {
+  padding: 6px 10px;
+  font-size: 12px;
+}
+
+.manage-list .inventory-card {
+  padding: 14px;
+  border-radius: 12px;
+  background: #fff;
+  border-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.manage-list .inventory-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.empty-msg {
+  color: #999;
+  text-align: center;
+  padding: 40px 20px;
+  grid-column: 1 / -1;
+}
+
+/* Tablet responsivo */
+@media (max-width: 900px) {
+  .manage-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .manage-form {
+    width: 100%;
+  }
+
+  .manage-list {
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  }
+}
+
+/* Móvil responsivo */
+@media (max-width: 600px) {
+  .manage-container {
+    padding: 12px;
+  }
+
+  .manage-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .manage-form {
+    padding: 12px;
+  }
+
+  .manage-form h3 {
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+
+  .form-row {
+    margin-bottom: 10px;
+  }
+
+  .form-row label {
+    font-size: 12px;
+  }
+
+  .form-row input {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+
+  .actions {
+    gap: 6px;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    padding: 8px 12px;
+    font-size: 12px;
+    min-width: auto;
+  }
+
+  .manage-list {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .manage-list .inventory-card {
+    padding: 10px;
+  }
+
+  .manage-list .inventory-card h4 {
+    font-size: 13px;
+  }
+
+  .product-actions button {
+    padding: 5px 8px;
+    font-size: 10px;
+  }
+}
+
+/* Móvil muy pequeño */
+@media (max-width: 400px) {
+  .manage-list {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .manage-container {
+    padding: 8px;
+  }
+
+  .manage-form {
+    padding: 10px;
+  }
+}

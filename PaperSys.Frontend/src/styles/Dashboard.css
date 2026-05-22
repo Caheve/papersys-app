@@ -1,0 +1,132 @@
+.dashboard-container {
+  padding: 16px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: calc(100vh - 64px);
+}
+
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.dashboard-cards > div {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: all 0.3s ease;
+  border-left: 4px solid #50C79F;
+}
+
+.dashboard-cards > div:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(80, 199, 159, 0.2);
+}
+
+.dashboard-cards > div:nth-child(2) {
+  border-left-color: #667eea;
+}
+
+.dashboard-cards > div:nth-child(3) {
+  border-left-color: #764ba2;
+}
+
+.dashboard-cards > div:nth-child(4) {
+  border-left-color: #ff6b6b;
+}
+
+.chart-container {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin-bottom: 20px;
+}
+
+.chart-container h2 {
+  margin-top: 0;
+  color: #1a1a1a;
+  font-size: 20px;
+  margin-bottom: 16px;
+}
+
+/* Tablet responsivo */
+@media (max-width: 900px) {
+  .dashboard-container {
+    padding: 12px;
+  }
+
+  .dashboard-cards {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .dashboard-cards > div {
+    padding: 16px;
+    font-size: 14px;
+  }
+
+  .chart-container {
+    padding: 16px;
+  }
+
+  .chart-container h2 {
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+}
+
+/* Móvil responsivo */
+@media (max-width: 600px) {
+  .dashboard-container {
+    padding: 8px;
+  }
+
+  .dashboard-cards {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .dashboard-cards > div {
+    padding: 14px;
+    font-size: 13px;
+  }
+
+  .chart-container {
+    padding: 12px;
+  }
+
+  .chart-container h2 {
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+}
+
+/* Móvil muy pequeño */
+@media (max-width: 400px) {
+  .dashboard-container {
+    padding: 6px;
+  }
+
+  .dashboard-cards > div {
+    padding: 12px;
+    font-size: 12px;
+  }
+
+  .chart-container {
+    padding: 10px;
+  }
+}

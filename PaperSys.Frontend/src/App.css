@@ -1,0 +1,112 @@
+#root {
+  width: 100%;
+  height: 100%;
+  background: #50C79F;
+  display: flex;
+  flex-direction: row;
+}
+
+#root > div {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+#root > div > div {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+html {
+  width: 100%;
+  height: 100%;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+/* Estilos responsivos para el layout principal */
+@media (max-width: 768px) {
+  #root {
+    flex-direction: column;
+  }
+
+  #root > div {
+    width: 100%;
+  }
+}
+
+/* Asegurar scrollbar personalizado */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #50C79F;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3aa584;
+}
+
+/* Estilos de impresión */
+@media print {
+  #root {
+    display: block !important;
+  }
+
+  #root > :first-child {
+    display: none !important;
+  }
+
+  #root > div > div {
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+}

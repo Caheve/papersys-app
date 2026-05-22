@@ -1,0 +1,65 @@
+/* Topbar styles */
+:root { --topbar-height: 64px; }
+.topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: var(--topbar-height);
+    background: #ffffff;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    z-index: 10000;
+}
+
+.topbar-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    gap: 12px;
+}
+
+.logo {
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.topnav {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.topnav a {
+    color: #333;
+    text-decoration: none;
+    padding: 8px 10px;
+    border-radius: 8px;
+}
+
+.topnav a:hover {
+    background: #f4f6fb;
+}
+
+/* Responsive: collapse to stacked menu on small screens */
+@media (max-width: 700px) {
+    .topbar-inner { padding: 0 12px; }
+    .topnav {
+        gap: 8px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* Ocultar sidebar en impresión */
+@media print {
+    .topbar {
+        display: none !important;
+    }
+}
