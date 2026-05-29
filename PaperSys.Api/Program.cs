@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using PaperSys.Api.Data;
 using QuestPDF.Infrastructure;
-
+//sadad
 QuestPDF.Settings.License = LicenseType.Community;
 
 const string CorsPolicyName = "AllowFrontend";
