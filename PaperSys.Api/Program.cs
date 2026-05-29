@@ -70,7 +70,7 @@ app.UseForwardedHeaders();
 
 app.UseCors(CorsPolicyName);
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
