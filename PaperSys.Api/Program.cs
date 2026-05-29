@@ -22,9 +22,20 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend",
         policy =>
         {
-            policy.WithOrigins("https://papersys.onrender.com")
-                  .AllowAnyHeader()
-                  .AllowAnyMethod();
+            policy
+                .SetIsOriginAllowed(origin =>
+                {
+                    if (!Uri.TryCreate(origin, UriKind.Absolute, out var uri))
+                    {
+                        return false;
+                    }
+
+                    return uri.Host.Equals("localhost", StringComparison.OrdinalIgnoreCase)
+                        || uri.Host.Equals("papersys-app-tsd7.vercel.app", StringComparison.OrdinalIgnoreCase)
+                        || uri.Host.EndsWith(".vercel.app", StringComparison.OrdinalIgnoreCase);
+                })
+                .AllowAnyHeader()
+                .AllowAnyMethod();
         });
 });
 
@@ -46,3 +57,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
