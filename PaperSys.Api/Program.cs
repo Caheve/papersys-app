@@ -2,13 +2,16 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using PaperSys.Api.Data;
 using QuestPDF.Infrastructure;
-//sadad
+
 QuestPDF.Settings.License = LicenseType.Community;
 
 const string CorsPolicyName = "AllowFrontend";
 string[] allowedOrigins =
 [
-        "https://papersys-app.onrender.com"
+    "https://papersys-app-tsd7.vercel.app",
+    "https://papersys-app.onrender.com",
+    "http://localhost:5173",
+    "https://localhost:5173"
 ];
 
 var builder = WebApplication.CreateBuilder(args);
