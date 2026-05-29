@@ -20,7 +20,17 @@ import {
   Legend
 } from "chart.js";
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
+
+// 🔥 URL GLOBAL DE LA API
+const API_URL = "https://papersys.onrender.com/api";
 
 function App() {
   const [ventasPorDia, setVentasPorDia] = useState([]);
@@ -28,69 +38,88 @@ function App() {
   const [dashboard, setDashboard] = useState(null);
   const [carrito, setCarrito] = useState([]);
 
+  // 🔹 Cargar datos iniciales
   const cargarDatos = useCallback(async () => {
     try {
       const [prodRes, dashRes, semanaRes] = await Promise.all([
-        fetch("http://localhost:5239/api/Productos").then((res) => res.json()),
-        fetch("http://localhost:5239/api/Ventas/dashboard").then((res) => res.json()),
-        fetch("http://localhost:5239/api/Ventas/ultimos-7-dias").then((res) => res.json()),
+        fetch(`${API_URL}/Productos`).then((res) => res.json()),
+        fetch(`${API_URL}/Ventas/dashboard`).then((res) => res.json()),
+        fetch(`${API_URL}/Ventas/ultimos-7-dias`).then((res) => res.json()),
       ]);
 
       setProductos(prodRes);
-      console.log("Productos cargados:", prodRes.data);
       setDashboard(dashRes);
       setVentasPorDia(semanaRes);
+
+      console.log("✅ Productos cargados:", prodRes);
     } catch (error) {
-      console.error("Error cargando datos:", error);
+      console.error("❌ Error cargando datos:", error);
     }
   }, []);
 
+  // 🔹 Ejecutar carga inicial
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     cargarDatos();
+
     const handler = () => cargarDatos();
-    window.addEventListener('productos:changed', handler);
-    return () => window.removeEventListener('productos:changed', handler);
+
+    window.addEventListener("productos:changed", handler);
+
+    return () =>
+      window.removeEventListener("productos:changed", handler);
   }, [cargarDatos]);
 
-  // 🔹 Funciones del carrito
+  // 🔹 Agregar al carrito
   const agregarAlCarrito = (producto, cantidad) => {
     if (cantidad <= 0) return;
+
     setCarrito((prev) => {
       const existente = prev.find((p) => p.id === producto.id);
+
       if (existente) {
         return prev.map((p) =>
-          p.id === producto.id ? { ...p, cantidad: p.cantidad + cantidad } : p
+          p.id === producto.id
+            ? { ...p, cantidad: p.cantidad + cantidad }
+            : p
         );
-      } else {
-        return [
-          ...prev,
-          {
-            id: producto.id,
-            nombre: producto.nombre,
-            precio: producto.precioVenta,
-            cantidad,
-          },
-        ];
       }
+
+      return [
+        ...prev,
+        {
+          id: producto.id,
+          nombre: producto.nombre,
+          precio: producto.precioVenta,
+          cantidad,
+        },
+      ];
     });
   };
 
+  // 🔹 Actualizar cantidad
   const actualizarCantidad = (id, nuevaCantidad) => {
     if (nuevaCantidad <= 0) return;
+
     setCarrito((prev) =>
       prev.map((item) =>
-        item.id === id ? { ...item, cantidad: nuevaCantidad } : item
+        item.id === id
+          ? { ...item, cantidad: nuevaCantidad }
+          : item
       )
     );
   };
 
+  // 🔹 Eliminar producto del carrito
   const eliminarDelCarrito = (id) => {
-    setCarrito((prev) => prev.filter((item) => item.id !== id));
+    setCarrito((prev) =>
+      prev.filter((item) => item.id !== id)
+    );
   };
 
+  // 🔹 Vaciar carrito
   const vaciarCarrito = () => setCarrito([]);
 
+  // 🔹 Resetear base de datos
   const resetearBaseDatos = async () => {
     const confirmacion = window.confirm(
       "⚠️ ¡ADVERTENCIA!\n\nEsta acción eliminará TODOS los datos:\n• Todas las ventas\n• Todos los productos\n\n¿Estás seguro de que deseas continuar?"
@@ -105,30 +134,46 @@ function App() {
     if (!dobleConfirmacion) return;
 
     try {
-      const response = await fetch("http://localhost:5239/api/Productos/reset-database", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-      });
+      const response = await fetch(
+        `${API_URL}/Productos/reset-database`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-      const contentType = response.headers.get("content-type");
-      
+      const contentType =
+        response.headers.get("content-type");
+
       if (!response.ok) {
         let errorMsg = "No se pudo limpiar la BD";
-        
-        if (contentType && contentType.includes("application/json")) {
+
+        if (
+          contentType &&
+          contentType.includes("application/json")
+        ) {
           const errorData = await response.json();
           errorMsg = errorData.error || errorMsg;
         } else {
           errorMsg = `Error ${response.status}: ${response.statusText}`;
         }
-        
+
         alert("❌ " + errorMsg);
         return;
       }
 
-      if (contentType && contentType.includes("application/json")) {
+      if (
+        contentType &&
+        contentType.includes("application/json")
+      ) {
         const data = await response.json();
-        alert(data.mensaje || "✅ Base de datos limpiada correctamente");
+
+        alert(
+          data.mensaje ||
+            "✅ Base de datos limpiada correctamente"
+        );
       } else {
         alert("✅ Base de datos limpiada correctamente");
       }
@@ -136,16 +181,20 @@ function App() {
       setCarrito([]);
       cargarDatos();
     } catch (error) {
-      console.error("Error al limpiar BD:", error);
+      console.error("❌ Error al limpiar BD:", error);
+
       alert("❌ Error de conexión: " + error.message);
     }
   };
 
+  // 🔹 Confirmar venta
   const confirmarVenta = async () => {
     try {
-      const response = await fetch("http://localhost:5239/api/Ventas", {
+      const response = await fetch(`${API_URL}/Ventas`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
           productos: carrito.map((item) => ({
             productoId: item.id,
@@ -155,35 +204,63 @@ function App() {
       });
 
       if (response.ok) {
-        alert("Venta registrada 💰");
+        alert("💰 Venta registrada");
+
         setCarrito([]);
+
         cargarDatos();
       } else {
-        alert("Error al vender");
+        alert("❌ Error al vender");
       }
     } catch (error) {
-      console.error("Error al confirmar venta:", error);
+      console.error(
+        "❌ Error al confirmar venta:",
+        error
+      );
     }
   };
 
   return (
     <Router>
-      <div style={{ display: "flex", flexDirection: "row", height: "100vh", width: "100vw" }}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          height: "100vh",
+          width: "100vw",
+        }}
+      >
         <Sidebar onReset={resetearBaseDatos} />
-        <div style={{ flex: 1, padding: "20px", paddingTop: 'var(--topbar-height)' }}>
+
+        <div
+          style={{
+            flex: 1,
+            padding: "20px",
+            paddingTop: "var(--topbar-height)",
+          }}
+        >
           <Routes>
+            {/* Dashboard */}
             <Route
               path="/"
-              element={<Dashboard dashboard={dashboard} ventasPorDia={ventasPorDia} />}
+              element={
+                <Dashboard
+                  dashboard={dashboard}
+                  ventasPorDia={ventasPorDia}
+                />
+              }
             />
 
-            {/* Inventario con carrito fijo abajo */}
+            {/* Inventario */}
             <Route
               path="/inventario"
               element={
-                <div style={{ position: 'relative' }}>
+                <div style={{ position: "relative" }}>
                   <div className="products-scroll">
-                    <Inventory productos={productos} agregarAlCarrito={agregarAlCarrito} />
+                    <Inventory
+                      productos={productos}
+                      agregarAlCarrito={agregarAlCarrito}
+                    />
                   </div>
 
                   <div className="cart-bottom">
@@ -201,9 +278,21 @@ function App() {
               }
             />
 
-            <Route path="/reportes" element={<Reports />} />
-            <Route path="/ventas" element={<Sales />} />
-            <Route path="/productos" element={<ManageProducts />} />
+            {/* Otras rutas */}
+            <Route
+              path="/reportes"
+              element={<Reports />}
+            />
+
+            <Route
+              path="/ventas"
+              element={<Sales />}
+            />
+
+            <Route
+              path="/productos"
+              element={<ManageProducts />}
+            />
           </Routes>
         </div>
       </div>
