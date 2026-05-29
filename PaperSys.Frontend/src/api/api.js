@@ -1,4 +1,4 @@
-const API_URL = "https://papersys.onrender.com/api";
+export const API_URL = "https://papersys.onrender.com/api";
 
 export const getProductos = async () => {
   return fetch(`${API_URL}/Productos`).then((res) => res.json());

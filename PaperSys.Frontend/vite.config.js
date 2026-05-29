@@ -8,10 +8,5 @@ export default defineConfig({
     fs: {
       allow: ['.']
     }
-  },
-  build: {
-    rollupOptions: {
-      input: '/index.html'
-    }
   }
 })

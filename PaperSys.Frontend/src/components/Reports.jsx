@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { API_URL } from "../api/api";
 import "../styles/Reports.css";
 
 function Reports() {
@@ -19,13 +20,13 @@ function Reports() {
 
       const [ganResponse, prodResponse, ventasResponse] = await Promise.all([
         fetch(
-          `http://localhost:5239/api/Ventas/ganancias${queryString ? "?" + queryString : ""}`
+          `${API_URL}/Ventas/ganancias${queryString ? "?" + queryString : ""}`
         ).then((res) => res.json()),
         fetch(
-          `http://localhost:5239/api/Ventas/producto-mas-vendido${queryString ? "?" + queryString : ""}`
+          `${API_URL}/Ventas/producto-mas-vendido${queryString ? "?" + queryString : ""}`
         ).then((res) => res.json()),
         fetch(
-          `http://localhost:5239/api/Ventas${queryString ? "?" + queryString : ""}`
+          `${API_URL}/Ventas${queryString ? "?" + queryString : ""}`
         ).then((res) => res.json()),
       ]);
 
@@ -46,7 +47,7 @@ function Reports() {
       if (fechaFin) params.append("fechaFin", fechaFin);
 
       const response = await fetch(
-        `http://localhost:5239/api/Ventas/reporte-pdf${params.toString() ? "?" + params.toString() : ""}`,
+        `${API_URL}/Ventas/reporte-pdf${params.toString() ? "?" + params.toString() : ""}`,
         {
           method: "GET",
         }

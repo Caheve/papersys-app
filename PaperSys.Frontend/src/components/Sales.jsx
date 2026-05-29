@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { API_URL } from "../api/api";
 import "../styles/Sales.css";
 
 function Sales() {
@@ -12,7 +13,7 @@ function Sales() {
   const fetchVentas = async () => {
     setCargando(true);
     try {
-      let url = "http://localhost:5239/api/Ventas";
+      let url = `${API_URL}/Ventas`;
       const params = new URLSearchParams();
       if (fechaInicio) params.append("fechaInicio", fechaInicio);
       if (fechaFin) params.append("fechaFin", fechaFin);
@@ -30,7 +31,7 @@ function Sales() {
 
   const verDetalle = async (id) => {
     try {
-      const res = await fetch(`http://localhost:5239/api/Ventas/${id}`);
+      const res = await fetch(`${API_URL}/Ventas/${id}`);
       const data = await res.json();
       setDetalle(data);
     } catch (error) {
