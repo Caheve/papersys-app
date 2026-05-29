@@ -6,6 +6,12 @@ using QuestPDF.Infrastructure;
 QuestPDF.Settings.License = LicenseType.Community;
 
 const string CorsPolicyName = "AllowFrontend";
+string[] allowedOrigins =
+[
+    "http://localhost:5173",
+    "https://papersys-app-tsd7.vercel.app",
+    "https://papersys-app.onrender.com"
+];
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,10 +41,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(CorsPolicyName, policy =>
     {
         policy
-            .WithOrigins(
-                "http://localhost:5173",
-                "https://papersys-app-tsd7.vercel.app"
-            )
+            .WithOrigins(allowedOrigins)
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
@@ -53,17 +56,17 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-
 app.UseForwardedHeaders();
 
 app.UseCors(CorsPolicyName);
+
+app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
 app.MapGet("/health", () =>
     Results.Ok(new { status = "ok" }));
 
-app.MapControllers();
+app.MapControllers().RequireCors(CorsPolicyName);
 
 app.Run();

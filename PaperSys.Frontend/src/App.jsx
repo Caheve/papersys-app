@@ -7,6 +7,7 @@ import ManageProducts from "./components/ManageProducts";
 import Cart from "./components/Cart";
 import Sales from "./components/Sales";
 import Reports from "./components/Reports";
+import { API_URL } from "./api/api";
 import "../src/App.css";
 import "./styles/Reports.css";
 
@@ -30,8 +31,6 @@ ChartJS.register(
 );
 
 // 🔥 URL GLOBAL DE LA API
-const API_URL = "https://papersys.onrender.com/api";
-
 function App() {
   const [ventasPorDia, setVentasPorDia] = useState([]);
   const [productos, setProductos] = useState([]);
