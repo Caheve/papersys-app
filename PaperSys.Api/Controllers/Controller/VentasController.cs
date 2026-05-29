@@ -344,8 +344,14 @@ namespace PaperSys.Api.Controllers
             var cantidadVentas = await ventasHoy.CountAsync();
 
             var productoMasVendido = await _context.VentaDetalles
-                .Where(d => d.Venta.Fecha >= hoy && d.Venta.Fecha < manana)
-                .GroupBy(d => d.Producto.Nombre)
+                .Include(d => d.Producto)
+                .Include(d => d.Venta)
+                .Where(d => d.Venta != null &&
+                d.Venta.Fecha >= hoy &&
+                d.Venta.Fecha < manana)
+                .GroupBy(d => d.Producto != null
+                ? d.Producto.Nombre
+                : "Sin nombre")
                 .Select(g => new {
                     Nombre = g.Key,
                     Cantidad = g.Sum(x => x.Cantidad)
