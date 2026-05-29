@@ -4,6 +4,8 @@ using QuestPDF.Infrastructure;
 
 QuestPDF.Settings.License = LicenseType.Community;
 
+const string CorsPolicyName = "AllowFrontend";
+
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -19,21 +21,23 @@ builder.Services.AddDbContext<PaperSysDbContext>(options => options.UseSqlServer
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowFrontend",
+    options.AddDefaultPolicy(policy =>
+    {
+        policy
+            .WithOrigins(
+                "http://localhost:5173",
+                "https://papersys-app-tsd7.vercel.app")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+
+    options.AddPolicy(CorsPolicyName,
         policy =>
         {
             policy
-                .SetIsOriginAllowed(origin =>
-                {
-                    if (!Uri.TryCreate(origin, UriKind.Absolute, out var uri))
-                    {
-                        return false;
-                    }
-
-                    return uri.Host.Equals("localhost", StringComparison.OrdinalIgnoreCase)
-                        || uri.Host.Equals("papersys-app-tsd7.vercel.app", StringComparison.OrdinalIgnoreCase)
-                        || uri.Host.EndsWith(".vercel.app", StringComparison.OrdinalIgnoreCase);
-                })
+                .WithOrigins(
+                    "http://localhost:5173",
+                    "https://papersys-app-tsd7.vercel.app")
                 .AllowAnyHeader()
                 .AllowAnyMethod();
         });
@@ -50,11 +54,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseCors("AllowFrontend");
+app.UseCors(CorsPolicyName);
 
 app.UseAuthorization();
 
-app.MapControllers();
+app.MapControllers().RequireCors(CorsPolicyName);
 
 app.Run();
 
