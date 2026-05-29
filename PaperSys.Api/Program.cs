@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using PaperSys.Api.Data;
 using QuestPDF.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 QuestPDF.Settings.License = LicenseType.Community;
 
@@ -23,8 +24,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<PaperSysDbContext>(options =>
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlite("Data Source=papersys.db"));
 
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
@@ -46,6 +46,19 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+app.Use(async (context, next) =>
+{
+    try
+    {
+        await next();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("ERROR GLOBAL:");
+        Console.WriteLine(ex.ToString());
+        throw;
+    }
+});
 
 // Pipeline
 
@@ -65,5 +78,11 @@ app.MapGet("/health", () =>
     Results.Ok(new { status = "ok" }));
 
 app.MapControllers().RequireCors(CorsPolicyName);
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<PaperSysDbContext>();
+    db.Database.Migrate();
+}
 
 app.Run();
