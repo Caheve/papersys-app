@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
 import Sidebar from "./components/Sidebar";
 import Dashboard from "./components/Dashboard";
 import Inventory from "./components/Inventory";
@@ -7,7 +8,9 @@ import ManageProducts from "./components/ManageProducts";
 import Cart from "./components/Cart";
 import Sales from "./components/Sales";
 import Reports from "./components/Reports";
+
 import { API_URL } from "./api/api";
+
 import "../src/App.css";
 import "./styles/Reports.css";
 
@@ -18,7 +21,7 @@ import {
   BarElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
 } from "chart.js";
 
 ChartJS.register(
@@ -30,55 +33,70 @@ ChartJS.register(
   Legend
 );
 
-// 🔥 URL GLOBAL DE LA API
 function App() {
   const [ventasPorDia, setVentasPorDia] = useState([]);
   const [productos, setProductos] = useState([]);
   const [dashboard, setDashboard] = useState(null);
   const [carrito, setCarrito] = useState([]);
 
-  // 🔹 Cargar datos iniciales
+  // 🔥 CARGAR DATOS
   const cargarDatos = useCallback(async () => {
     try {
       const [prodRes, dashRes, semanaRes] = await Promise.all([
         fetch(`${API_URL}/Productos`).then((res) => res.json()),
         fetch(`${API_URL}/Ventas/dashboard`).then((res) => res.json()),
-        fetch(`${API_URL}/Ventas/ultimos-7-dias`).then((res) => res.json()),
+        fetch(`${API_URL}/Ventas/ultimos-7-dias`).then((res) =>
+          res.json()
+        ),
       ]);
 
-      setProductos(prodRes);
-      setDashboard(dashRes);
-      setVentasPorDia(semanaRes);
+      // 🔥 FORZAR ACTUALIZACIÓN REACT
+      setProductos([...(prodRes.data || prodRes)]);
 
-      console.log("✅ Productos cargados:", prodRes);
+      console.log("📊 Dashboard actualizado:", dashRes);
+
+      setDashboard({ ...dashRes });
+
+      setVentasPorDia([...semanaRes]);
     } catch (error) {
       console.error("❌ Error cargando datos:", error);
     }
   }, []);
 
-  // 🔹 Ejecutar carga inicial
+  // 🔥 CARGA INICIAL
   useEffect(() => {
     cargarDatos();
 
     const handler = () => cargarDatos();
 
-    window.addEventListener("productos:changed", handler);
+    window.addEventListener(
+      "productos:changed",
+      handler
+    );
 
     return () =>
-      window.removeEventListener("productos:changed", handler);
+      window.removeEventListener(
+        "productos:changed",
+        handler
+      );
   }, [cargarDatos]);
 
-  // 🔹 Agregar al carrito
+  // 🔥 AGREGAR AL CARRITO
   const agregarAlCarrito = (producto, cantidad) => {
     if (cantidad <= 0) return;
 
     setCarrito((prev) => {
-      const existente = prev.find((p) => p.id === producto.id);
+      const existente = prev.find(
+        (p) => p.id === producto.id
+      );
 
       if (existente) {
         return prev.map((p) =>
           p.id === producto.id
-            ? { ...p, cantidad: p.cantidad + cantidad }
+            ? {
+                ...p,
+                cantidad: p.cantidad + cantidad,
+              }
             : p
         );
       }
@@ -95,30 +113,36 @@ function App() {
     });
   };
 
-  // 🔹 Actualizar cantidad
-  const actualizarCantidad = (id, nuevaCantidad) => {
+  // 🔥 ACTUALIZAR CANTIDAD
+  const actualizarCantidad = (
+    id,
+    nuevaCantidad
+  ) => {
     if (nuevaCantidad <= 0) return;
 
     setCarrito((prev) =>
       prev.map((item) =>
         item.id === id
-          ? { ...item, cantidad: nuevaCantidad }
+          ? {
+              ...item,
+              cantidad: nuevaCantidad,
+            }
           : item
       )
     );
   };
 
-  // 🔹 Eliminar producto del carrito
+  // 🔥 ELIMINAR DEL CARRITO
   const eliminarDelCarrito = (id) => {
     setCarrito((prev) =>
       prev.filter((item) => item.id !== id)
     );
   };
 
-  // 🔹 Vaciar carrito
+  // 🔥 VACIAR CARRITO
   const vaciarCarrito = () => setCarrito([]);
 
-  // 🔹 Resetear base de datos
+  // 🔥 RESETEAR BASE DE DATOS
   const resetearBaseDatos = async () => {
     const confirmacion = window.confirm(
       "⚠️ ¡ADVERTENCIA!\n\nEsta acción eliminará TODOS los datos:\n• Todas las ventas\n• Todos los productos\n\n¿Estás seguro de que deseas continuar?"
@@ -138,34 +162,46 @@ function App() {
         {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type":
+              "application/json",
           },
         }
       );
 
       const contentType =
-        response.headers.get("content-type");
+        response.headers.get(
+          "content-type"
+        );
 
       if (!response.ok) {
-        let errorMsg = "No se pudo limpiar la BD";
+        let errorMsg =
+          "No se pudo limpiar la BD";
 
         if (
           contentType &&
-          contentType.includes("application/json")
+          contentType.includes(
+            "application/json"
+          )
         ) {
-          const errorData = await response.json();
-          errorMsg = errorData.error || errorMsg;
+          const errorData =
+            await response.json();
+
+          errorMsg =
+            errorData.error || errorMsg;
         } else {
           errorMsg = `Error ${response.status}: ${response.statusText}`;
         }
 
         alert("❌ " + errorMsg);
+
         return;
       }
 
       if (
         contentType &&
-        contentType.includes("application/json")
+        contentType.includes(
+          "application/json"
+        )
       ) {
         const data = await response.json();
 
@@ -174,40 +210,58 @@ function App() {
             "✅ Base de datos limpiada correctamente"
         );
       } else {
-        alert("✅ Base de datos limpiada correctamente");
+        alert(
+          "✅ Base de datos limpiada correctamente"
+        );
       }
 
       setCarrito([]);
+
       cargarDatos();
     } catch (error) {
-      console.error("❌ Error al limpiar BD:", error);
+      console.error(
+        "❌ Error al limpiar BD:",
+        error
+      );
 
-      alert("❌ Error de conexión: " + error.message);
+      alert(
+        "❌ Error de conexión: " +
+          error.message
+      );
     }
   };
 
-  // 🔹 Confirmar venta
+  // 🔥 CONFIRMAR VENTA
   const confirmarVenta = async () => {
     try {
-      const response = await fetch(`${API_URL}/Ventas`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          productos: carrito.map((item) => ({
-            productoId: item.id,
-            cantidad: item.cantidad,
-          })),
-        }),
-      });
+      const response = await fetch(
+        `${API_URL}/Ventas`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+          body: JSON.stringify({
+            productos: carrito.map(
+              (item) => ({
+                productoId: item.id,
+                cantidad: item.cantidad,
+              })
+            ),
+          }),
+        }
+      );
 
       if (response.ok) {
         alert("💰 Venta registrada");
 
         setCarrito([]);
 
-        cargarDatos();
+        // 🔥 ESPERAR A QUE SQL GUARDE
+        setTimeout(() => {
+          cargarDatos();
+        }, 500);
       } else {
         alert("❌ Error al vender");
       }
@@ -235,30 +289,41 @@ function App() {
           style={{
             flex: 1,
             padding: "20px",
-            paddingTop: "var(--topbar-height)",
+            paddingTop:
+              "var(--topbar-height)",
           }}
         >
           <Routes>
-            {/* Dashboard */}
+            {/* 🔥 DASHBOARD */}
             <Route
               path="/"
               element={
                 <Dashboard
                   dashboard={dashboard}
-                  ventasPorDia={ventasPorDia}
+                  ventasPorDia={
+                    ventasPorDia
+                  }
                 />
               }
             />
 
-            {/* Inventario */}
+            {/* 🔥 INVENTARIO */}
             <Route
               path="/inventario"
               element={
-                <div style={{ position: "relative" }}>
+                <div
+                  style={{
+                    position: "relative",
+                  }}
+                >
                   <div className="products-scroll">
                     <Inventory
-                      productos={productos}
-                      agregarAlCarrito={agregarAlCarrito}
+                      productos={
+                        productos
+                      }
+                      agregarAlCarrito={
+                        agregarAlCarrito
+                      }
                     />
                   </div>
 
@@ -266,10 +331,18 @@ function App() {
                     <div className="cart-inner">
                       <Cart
                         carrito={carrito}
-                        actualizarCantidad={actualizarCantidad}
-                        eliminarDelCarrito={eliminarDelCarrito}
-                        vaciarCarrito={vaciarCarrito}
-                        confirmarVenta={confirmarVenta}
+                        actualizarCantidad={
+                          actualizarCantidad
+                        }
+                        eliminarDelCarrito={
+                          eliminarDelCarrito
+                        }
+                        vaciarCarrito={
+                          vaciarCarrito
+                        }
+                        confirmarVenta={
+                          confirmarVenta
+                        }
                       />
                     </div>
                   </div>
@@ -277,20 +350,24 @@ function App() {
               }
             />
 
-            {/* Otras rutas */}
+            {/* 🔥 REPORTES */}
             <Route
               path="/reportes"
               element={<Reports />}
             />
 
+            {/* 🔥 VENTAS */}
             <Route
               path="/ventas"
               element={<Sales />}
             />
 
+            {/* 🔥 PRODUCTOS */}
             <Route
               path="/productos"
-              element={<ManageProducts />}
+              element={
+                <ManageProducts />
+              }
             />
           </Routes>
         </div>
