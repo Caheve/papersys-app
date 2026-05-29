@@ -330,9 +330,20 @@ namespace PaperSys.Api.Controllers
             return Ok(resultado);
         }
 
-        [HttpGet("dashboard")]
         public async Task<IActionResult> Dashboard()
         {
+            try
+                {
+                    // código
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(500, new
+                    {
+                        error = ex.Message,
+                        inner = ex.InnerException?.Message
+                    });
+                }            
             var hoy = DateTime.Today;
             var manana = hoy.AddDays(1);
 
@@ -375,35 +386,50 @@ namespace PaperSys.Api.Controllers
         [HttpGet("ultimos-7-dias")]
         public async Task<IActionResult> Ultimos7Dias()
         {
-            var hoy = DateTime.Today;
-            var hace7Dias = hoy.AddDays(-6); // incluye hoy
+            try
+            {
+                var hoy = DateTime.UtcNow.Date;
+                var hace7Dias = hoy.AddDays(-6);
 
-            var ventas = await _context.Ventas
-                .Where(v => v.Fecha >= hace7Dias && v.Fecha < hoy.AddDays(1))
-                .GroupBy(v => v.Fecha.Date)
-                .Select(g => new
-                {
-                    Fecha = g.Key,
-                    Total = g.Sum(v => v.Total)
-                })
-                .ToListAsync();
+                var ventas = await _context.Ventas
+                    .Where(v => v.Fecha >= hace7Dias)
+                    .ToListAsync();
 
-            // Generamos los 7 días aunque no haya ventas
-            var resultado = Enumerable.Range(0, 7)
-                .Select(i =>
-                {
-                    var fecha = hace7Dias.AddDays(i);
-                    var ventaDia = ventas.FirstOrDefault(v => v.Fecha == fecha);
-
-                    return new
+                var agrupadas = ventas
+                    .GroupBy(v => v.Fecha.Date)
+                    .Select(g => new
                     {
-                        fecha = fecha.ToString("yyyy-MM-dd"),
-                        total = ventaDia?.Total ?? 0
-                    };
-                })
-                .ToList();
+                        Fecha = g.Key,
+                        Total = g.Sum(v => v.Total)
+                    })
+                    .ToList();
 
-            return Ok(resultado);
+                var resultado = Enumerable.Range(0, 7)
+                    .Select(i =>
+                    {
+                        var fecha = hace7Dias.AddDays(i);
+
+                        var ventaDia = agrupadas
+                            .FirstOrDefault(v => v.Fecha == fecha);
+
+                        return new
+                        {
+                            fecha = fecha.ToString("yyyy-MM-dd"),
+                            total = ventaDia?.Total ?? 0
+                        };
+                    })
+                    .ToList();
+
+                return Ok(resultado);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    error = ex.Message,
+                    inner = ex.InnerException?.Message
+                });
+            }
         }
 
     }
