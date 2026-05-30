@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using PaperSys.Api.Data;
 using QuestPDF.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
+
 
 QuestPDF.Settings.License = LicenseType.Community;
 
@@ -24,7 +24,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<PaperSysDbContext>(options =>
-    options.UseSqlite("Data Source=papersys.db"));
+    options.UseNpgsql(
+    builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
