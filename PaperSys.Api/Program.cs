@@ -85,10 +85,10 @@ app.MapGet("/health", () =>
 
 app.MapControllers().RequireCors(CorsPolicyName);
 
-using (var scope = app.Services.CreateScope())
+/* using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<PaperSysDbContext>();
     db.Database.Migrate();
 }
-
+ */
 app.Run();
