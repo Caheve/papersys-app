@@ -23,6 +23,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+Console.WriteLine("CONNECTION STRING:");
+Console.WriteLine(connectionString);
+
 builder.Services.AddDbContext<PaperSysDbContext>(options =>
     options.UseNpgsql(
     builder.Configuration.GetConnectionString("DefaultConnection")));
